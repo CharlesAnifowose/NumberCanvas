@@ -15,7 +15,8 @@
     <script src="./lib/accounting.js"></script>
     <script src="./lib/codemirror/codemirror.js"></script>
     <script src="./lib/codemirror/mode/javascript/javascript.js"></script>
-
+    
+    
     <style type="text/css">
       .CodeMirror {
         border: 1px solid #eee;
@@ -34,8 +35,8 @@
   <div id="content" >
     <form>
         <textarea id="code" name="code">
-b = 6
-a = b + 2
+calc = 2^6
+
 </textarea></form>
   </div>
   
@@ -103,6 +104,13 @@ function parseLineContents(lineStr, assignedValues){
     var val
     var len = Math.min(2, lineContents.length)
     var skipAppend = false;
+    
+    // quick hack to fix enter key behaviour
+    if (lineContents.length == 2 && $.trim(lineContents[0]) == '' &&  !isNaN(parseFloat(lineContents[1]))){
+        return lineContents[0];
+    }
+    
+    // Parse calculation / assignment
     for (var i=0; i<len; i++){
         var expressionStr = lineContents[i];
         lineReturn.push(expressionStr);
