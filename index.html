@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta name="description" content="JS Math Expressions" />
+    <meta charset=utf-8 />
+    <title>Calculator</title>
+
+    <link rel="stylesheet" href="./lib/codemirror/codemirror.css">
+    <link rel="stylesheet" href="./lib/codemirror/theme/neat.css">
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="./lib/calcparse.js"></script>
+    <script src="./lib/accounting.js"></script>
+    <script src="./lib/codemirror/codemirror.js"></script>
+    <script src="./lib/codemirror/mode/javascript/javascript.js"></script>
+
+    <style type="text/css">
+      .CodeMirror {
+        border: 1px solid #eee;
+        height: auto;
+      }
+      .CodeMirror-scroll {
+        overflow-y: hidden;
+        overflow-x: auto;
+      }
+    </style>
+    
+</head>
+
+<body>
+  
+  <div id="content" >
+    <form>
+        <textarea id="code" name="code">
+b = 6
+a = b + 2
+</textarea></form>
+  </div>
+  
+  
+  
+ <script>
+  var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    theme: 'neat'
+  });
+  
+</script>
+    
+    
+<script>
+var errorString = '!ERROR';
+var backgroundChangeMode = false;
+function addCommas(nStr){
+  nStr += '';
+  x = nStr.split('.');
+  x1 = x[0];
+  x2 = x.length > 1 ? '.' + x[1] : '';
+  var rgx = /(\d+)(\d{3})/;
+  while (rgx.test(x1)) {
+    x1 = x1.replace(rgx, '$1' + ',' + '$2');
+  }
+  return x1 + x2;
+}
+function calculateLines(){
+    if (backgroundChangeMode) return;
+    backgroundChangeMode = true
+    
+    var cursor = editor.getCursor();
+    
+    var assignedValues = {
+      ans:0,
+      answer:0,
+      prev:0,
+      previous:0
+    };
+    
+    // Cycle through lines
+    var len = editor.lineCount();
+    for (var i=0; i<len; i++){
+        var lineStr = editor.getLine(i);
+        if ($.trim(lineStr) != ''){
+            lineStr = parseLineContents(lineStr, assignedValues);
+                editor.setLine(i, lineStr);
+                try {
+                
+            }
+            catch (e){
+                console.log(e)
+            }
+        }
+    }
+    
+    editor.setCursor(cursor)
+    
+    backgroundChangeMode = false;
+}
+function parseLineContents(lineStr, assignedValues){
+    var lineContents = lineStr.split('=');
+    var varsForAssignment = []
+    var lineReturn = [];
+    var val
+    var len = Math.min(2, lineContents.length)
+    var skipAppend = false;
+    for (var i=0; i<len; i++){
+        var expressionStr = lineContents[i];
+        lineReturn.push(expressionStr);
+        
+        expressionStr = $.trim(expressionStr);
+        if (expressionStr=='') continue; 
+        try {
+            var expression = Parser.parse(expressionStr);
+        }
+        catch (e) {
+            console.log ('evaluation failed on line '+(i+1));
+        }
+        
+        if (expression){
+            if ( isComplexExpression(expression) ){
+                try {
+                    val = expression.evaluate(assignedValues);
+                }
+                catch (e){
+                    console.log ('evaluation failed on line '+(i+1))
+                }
+                break;
+            }
+            else{
+                if (i==len-1){
+                    val = parseFloat(expressionStr);
+                    if ( isNaN(val) ){
+                        val = assignedValues[expressionStr];
+                    }
+                    else{
+                        skipAppend = true
+                    }
+                }
+                else{
+                    varsForAssignment.push(expressionStr);
+                }
+            }
+        }
+    }
+    if (val != undefined){
+        assignValueToVars(val, assignedValues, varsForAssignment)
+        if (!skipAppend) lineReturn.push(' '+ accounting.formatMoney(val, {symbol:''}))
+    }
+    return lineReturn.join('=')
+}
+function assignValueToVars(val, varObj, varNameList){
+    var len = varNameList.length
+    for (var i=0; i<len; i++){
+    var varName = varNameList[i]
+        varObj[varName] = val;
+    }
+}
+function isComplexExpression(expression){
+    return !(expression.tokens.length == 1);
+}
+editor.on('change', calculateLines)
+calculateLines()
+
+
+
+</script>
+</body>
+</html>
