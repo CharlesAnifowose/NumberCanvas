@@ -12,7 +12,6 @@
     
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
     <script src="./lib/calcparse.js"></script>
-    <script src="./lib/accounting.js"></script>
     <script src="./lib/codemirror/codemirror.js"></script>
     <script src="./lib/codemirror/mode/javascript/javascript.js"></script>
     
@@ -53,17 +52,7 @@ calc = 2^6
 <script>
 var errorString = '!ERROR';
 var backgroundChangeMode = false;
-function addCommas(nStr){
-  nStr += '';
-  x = nStr.split('.');
-  x1 = x[0];
-  x2 = x.length > 1 ? '.' + x[1] : '';
-  var rgx = /(\d+)(\d{3})/;
-  while (rgx.test(x1)) {
-    x1 = x1.replace(rgx, '$1' + ',' + '$2');
-  }
-  return x1 + x2;
-}
+
 function calculateLines(){
     if (backgroundChangeMode) return;
     backgroundChangeMode = true
@@ -92,9 +81,7 @@ function calculateLines(){
             }
         }
     }
-    
     editor.setCursor(cursor)
-    
     backgroundChangeMode = false;
 }
 function parseLineContents(lineStr, assignedValues){
@@ -152,7 +139,7 @@ function parseLineContents(lineStr, assignedValues){
     }
     if (val != undefined){
         assignValueToVars(val, assignedValues, varsForAssignment)
-        if (!skipAppend) lineReturn.push(' '+ accounting.formatMoney(val, {symbol:''}))
+        if (!skipAppend) lineReturn.push(' '+ String(val))
     }
     return lineReturn.join('=')
 }
@@ -168,8 +155,6 @@ function isComplexExpression(expression){
 }
 editor.on('change', calculateLines)
 calculateLines()
-
-
 
 </script>
 </body>
