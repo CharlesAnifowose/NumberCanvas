@@ -15,7 +15,6 @@
     <script src="./lib/codemirror/codemirror.js"></script>
     <script src="./lib/codemirror/mode/javascript/javascript.js"></script>
     
-    
     <style type="text/css">
       .CodeMirror {
         border: 1px solid #eee;
@@ -29,6 +28,7 @@
         font-family: 'Helvetica Neue', Helvetica, Arial;
         margin-top:60px; 
         color: #777;
+        text-align: right;
       }
       .credits a {
         color: #777;
@@ -59,7 +59,8 @@ FV = PV*(1+i)^n
 </textarea></form>
     <p class="credits">
         <small>
-            <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/" style="color:#69F">Creative Commons BY-SA 3.0</a>
+            <strong>Number Canvas</strong>
+            / <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/" style="color:#69F">Creative Commons BY-SA 3.0</a>
             / <a target="_blank" href="https://github.com/CharlesAnifowose">Charles Anifowose</a> 
             / <a target="_blank" href="http://www.vretta.com">Vretta</a>
         </small>
@@ -229,7 +230,8 @@ function parseLineContents(lineStr, assignedValues){
     }
     if (val != undefined){
         assignValueToVars(val, assignedValues, varsForAssignment)
-        if (!skipAppend) lineReturn.push(' '+ String(val))
+        var valStr = String(Number(Number(val).toFixed(9)));
+        if (!skipAppend) lineReturn.push(' '+ valStr )
     }
     return lineReturn.join('=')
 }
@@ -243,8 +245,13 @@ function assignValueToVars(val, varObj, varNameList){
 function isComplexExpression(expression){
     return !(expression.tokens.length == 1);
 }
-editor.on('change', calculateLines)
-calculateLines()
+var typingBuffer, changeBufferList=[];
+editor.on('change', function(doc, changeObj){
+    if(typingBuffer !== undefined) clearTimeout(typingBuffer);
+    changeBufferList.push(changeObj);
+    typingBuffer = setTimeout(calculateLines, 300); // CoeMirror's historyEventDelay is 500 milliseconds, so this buffer allows the history to be saved first
+})
+calculateLines({startLine:0})
 
 </script>
 </body>
