@@ -24,18 +24,27 @@
         overflow-y: hidden;
         overflow-x: auto;
       }
+      .content {
+        padding-bottom: 60px;
+      }
       .credits {
         font-family: 'Helvetica Neue', Helvetica, Arial;
-        margin-top:60px; 
+        margin-bottom:10px; 
         color: #777;
-        text-align: right;
+        text-align: left;
+        font-size:9px;
       }
       .credits a {
         color: #777;
-        text-decoration: none;
       }
       .credits a:hover {
         color: #000;
+      }
+      a.license{
+        color: #6BB4D6;
+      }
+      a.license:hover{
+        color: #548AA3;
       }
     </style>
     
@@ -44,6 +53,13 @@
 <body>
   
   <div id="content" >
+    <p class="credits">
+        <strong>Number Canvas</strong>
+        / <a target="_blank" href="https://github.com/CharlesAnifowose">Charles Anifowose</a> 
+        / <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/" class="license">Creative Commons BY-SA 3.0</a>
+        <!-- / <a target="_blank" href="http://www.vretta.com">Vretta</a> -->
+    </p>
+  
     <form>
         <textarea id="code" name="code">
 PV = 100 
@@ -57,16 +73,7 @@ n = m*t
 FV = PV*(1+i)^n 
 
 </textarea></form>
-    <p class="credits">
-        <small>
-            <strong>Number Canvas</strong>
-            / <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/" style="color:#69F">Creative Commons BY-SA 3.0</a>
-            / <a target="_blank" href="https://github.com/CharlesAnifowose">Charles Anifowose</a> 
-            / <a target="_blank" href="http://www.vretta.com">Vretta</a>
-        </small>
-    </p>
   </div>
-  
   
   
  <script>
