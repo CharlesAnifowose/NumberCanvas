@@ -194,7 +194,9 @@ function parseLineContents(lineStr, assignedValues){
             var expression = Parser.parse(expressionStr);
         }
         catch (e) {
-            console.log ('evaluation failed on line '+(i+1));
+            if (console){ 
+                console.log ('evaluation failed on line '+(i+1));
+            }
         }
         
         if (expression){
@@ -203,7 +205,9 @@ function parseLineContents(lineStr, assignedValues){
                     val = expression.evaluate(assignedValues);
                 }
                 catch (e){
-                    console.log ('evaluation failed on line '+(i+1))
+                    if (console){ 
+                        console.log ('evaluation failed on line '+(i+1));
+                    }
                 }
                 break;
             }
