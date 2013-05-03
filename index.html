@@ -25,6 +25,18 @@
         overflow-y: hidden;
         overflow-x: auto;
       }
+      .credits {
+        font-family: 'Helvetica Neue', Helvetica, Arial;
+        margin-top:60px; 
+        color: #777;
+      }
+      .credits a {
+        color: #777;
+        text-decoration: none;
+      }
+      .credits a:hover {
+        color: #000;
+      }
     </style>
     
 </head>
@@ -34,16 +46,42 @@
   <div id="content" >
     <form>
         <textarea id="code" name="code">
-calc = 2^6
+PV = 100 
+j = 10/100 
+m = 12 
+t = 50 
+
+i = j/m 
+n = m*t 
+
+FV = PV*(1+i)^n 
 
 </textarea></form>
+    <p class="credits">
+        <small>
+            <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/" style="color:#69F">Creative Commons BY-SA 3.0</a>
+            / <a target="_blank" href="https://github.com/CharlesAnifowose">Charles Anifowose</a> 
+            / <a target="_blank" href="http://www.vretta.com">Vretta</a>
+        </small>
+    </p>
   </div>
   
   
   
  <script>
   var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-    theme: 'neat'
+    theme: 'neat',
+    historyEventDelay: 250,
+    extraKeys: {
+        Enter: function(doc){
+            // move to end of line
+            var currentCursor = doc.getCursor('end'); //{line, ch}
+            var currentLine = doc.getLine(currentCursor.line) // string
+            doc.setCursor(currentCursor.line, currentLine.length)
+            // insert new line
+            doc.replaceSelection('\n', "end", "+input");
+        }
+    }
   });
   
 </script>
@@ -53,37 +91,90 @@ calc = 2^6
 var errorString = '!ERROR';
 var backgroundChangeMode = false;
 
-function calculateLines(){
+var intevalMemory = []
+intevalMemory[0] = {
+  ans:0,
+  answer:0,
+  prev:0,
+  previous:0
+};
+
+function foreach(arr, callback){
+    for (i in arr){
+        callback(arr[i],i)
+    }
+}
+function calculateLines(params){
     if (backgroundChangeMode) return;
     backgroundChangeMode = true
     
+    if (!params){
+        params = {};
+    }
+
+    // lines that were changed
+    var concernedLinesMap = {};
+    foreach (changeBufferList, function(changeObj){
+        concernedLinesMap[changeObj.from.line] = true;
+    });
+    changeBufferList = [];
+    var startLine = params.startLine;
+    foreach (concernedLinesMap, function(flag, lineNumber){
+        lineNumber = Number(lineNumber);
+        if (startLine === undefined || lineNumber < startLine){
+            startLine = lineNumber;
+        }
+    })
+    // move startLine by increments of 10
+    var startStep = Math.floor(startLine/10);
+    if (startStep > intevalMemory.length -1){
+        startStep = intevalMemory.length - 1;
+    }
+    startLine = Math.round( startStep*10 );
+
+    // get original cursor so that you can set it back
     var cursor = editor.getCursor();
     
-    var assignedValues = {
-      ans:0,
-      answer:0,
-      prev:0,
-      previous:0
-    };
+    // start with some original assigned values
+    var assignedValues = {};
+    var intervalValues = intevalMemory[startStep]
+    foreach(intervalValues, function(value,i){
+        assignedValues[i] = value;
+    });
     
-    // Cycle through lines
+    // Cycle through changed lines
     var len = editor.lineCount();
-    for (var i=0; i<len; i++){
-        var lineStr = editor.getLine(i);
+    for (var lineNumber=startLine; lineNumber<len; lineNumber++){
+
+        // save values
+        if ( (lineNumber > 0) && (lineNumber % 10 === 0) ){
+            var intervalValues = {}
+            foreach(assignedValues, function(value,i){
+                intervalValues[i] = value;
+            });
+            var currentStep = Math.round(lineNumber/10);
+            intevalMemory[currentStep] = intervalValues;
+        }
+
+        var lineStr = editor.getLine(lineNumber);
+        var originalLineStr = lineStr;
         if ($.trim(lineStr) != ''){
             lineStr = parseLineContents(lineStr, assignedValues);
-                editor.setLine(i, lineStr);
-                try {
-                
+            if (originalLineStr !== lineStr){
+                // update line
+                editor.setLine(lineNumber, lineStr);
             }
-            catch (e){
-                console.log(e)
-            }
+
         }
     }
+    
+    // set cursor back
     editor.setCursor(cursor)
+
+    // unlock changes
     backgroundChangeMode = false;
 }
+
 function parseLineContents(lineStr, assignedValues){
     var lineContents = lineStr.split('=');
     var varsForAssignment = []
@@ -91,11 +182,6 @@ function parseLineContents(lineStr, assignedValues){
     var val
     var len = Math.min(2, lineContents.length)
     var skipAppend = false;
-    
-    // quick hack to fix enter key behaviour
-    if (lineContents.length == 2 && $.trim(lineContents[0]) == '' &&  !isNaN(parseFloat(lineContents[1]))){
-        return lineContents[0];
-    }
     
     // Parse calculation / assignment
     for (var i=0; i<len; i++){
