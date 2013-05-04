@@ -1,16 +1,32 @@
+html, body {
+    margin:0px;
+    padding:0px;
+}
+
 .CodeMirror {
     border: 1px solid #eee;
     height: auto;
+    margin-bottom:100px;
 }
 .CodeMirror-scroll {
     overflow-y: hidden;
     overflow-x: auto;
 }
-.content {
-    padding-bottom: 60px;
+.CodeMirror-matchingbracket{
+    color: #f00;
 }
+.CodeMirror-focused .cm-matchhighlight {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQI12NgYGBgkKzc8x9CMDAwAAAmhwSbidEoSQAAAABJRU5ErkJggg==);
+    background-position: bottom;
+    background-repeat: repeat-x;
+}
+.CodeMirror-activeline-background {
+    /*background-color: #f2f6ff;*/
+}
+
 .credits {
     font-family: 'Helvetica Neue', Helvetica, Arial;
+    padding-left:8px; 
     margin-bottom:10px; 
     color: #777;
     text-align: left;
@@ -22,9 +38,19 @@
 .credits a:hover {w
     color: #000;
 }
-    a.license{
+/*a.license{
     color: #6BB4D6;
 }
-    a.license:hover{
+a.license:hover{
     color: #548AA3;
+}
+*/
+#mathpreview {
+    position: fixed;
+    bottom: 0px;
+    padding: 8px; 
+    width:100%;
+    background-color: #f6f6f6;
+    border-top: 1px solid #ccc;
+    z-index:10;
 }

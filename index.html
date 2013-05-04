@@ -4,27 +4,35 @@
 <head>
 
     <meta name="description" content="JS Math Expressions" />
-    <meta charset=utf-8 />
+    <meta charset="utf-8" />
     <title>Calculator</title>
 
-    <link rel="stylesheet" href="./lib/codemirror/codemirror.css">
-    <link rel="stylesheet" href="./lib/codemirror/theme/neat.css">
-    <link rel="stylesheet" href="./lib/calcstyle.css">
-    
+    <!-- jQuery -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    
+    <!-- CodeMirror - text editor library, designed for code -->
+    <script src="./CodeMirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="./CodeMirror/lib/codemirror.css">
+    <link rel="stylesheet" href="./CodeMirror/theme/neat.css">
+    <script src="./CodeMirror/mode/javascript/javascript.js"></script>
+    <script src="./CodeMirror/addon/selection/active-line.js"></script>
+    <script src="./CodeMirror/addon/search/match-highlighter.js"></script>
+    <script src="./CodeMirror/addon/edit/matchbrackets.js"></script>
+    
+    <!-- Custom Scripts -->
+    <link rel="stylesheet" href="./lib/calcstyle.css">
     <script src="./lib/calcparse.js"></script>
-    <script src="./lib/codemirror/codemirror.js"></script>
-    <script src="./lib/codemirror/mode/javascript/javascript.js"></script>
+
+    <!-- MathJax for math typesetting -->
     <script src="./lib/simplemath-to-latex.js"></script>    
-    <script src="./lib/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="./MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
           tex2jax: {
             inlineMath:   [['\\(','\\)']],
             displayMath:  [['\\[','\\]']],
-            processClass: "mathjax",
-            ignoreClass: "no-mathjax"
-          }
+          },
+          messageStyle: "none"
         });
     </script>
     
@@ -34,14 +42,18 @@
   
   <div id="content" >
     <p class="credits">
-        <strong>Number Canvas</strong>
-        / <a target="_blank" href="https://github.com/CharlesAnifowose/NumberCanvas">Charles Anifowose</a> 
+        
+        <a target="_blank" href="https://github.com/CharlesAnifowose/NumberCanvas"><strong>Number Canvas </strong></a> 
+        / <a target="_blank" href="http://www.vretta.com/">Charles Anifowose (Vretta)</a> 
         / <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/" class="license">Creative Commons BY-SA 3.0</a>
         <!-- / <a target="_blank" href="http://www.vretta.com">Vretta</a> -->
+        
+        <a href="javascript:alert('Just type your math in the box and have the results calculated in front of you. If you put in a long calculation, you can always go in and change a few values. You can also use variables (just like you learned in grade-school) to assign certain values to be used again and again, or just to help label things. Variable names cant have spaces in them (but they can have underscores) and should start with a letter. \n\n You can share your calculations with other people by just selecting the text and pasting it in an email. They can keep playing with the numbers by going to numbercanvas.com themselves and just pasting back in the text. \n\n You will notice that the Enter key works a little differently in this texbox. When you hit Enter, it makes a new line underneath. If you hold Shift, it will put a line one top. \n\n I understand that math written in a single line can get hard to read, so there is a little box at the bottom so you can see what your calculation looks like in traditional math. Remember to watch your brackets!')" style="float:right; margin-right:12px;">Help</a>
     </p>
   
     <form>
         <textarea id="code" name="code">
+
 // Solving a financial problem
 PV = 100 
 j = 10/100 
@@ -55,6 +67,9 @@ n = m*t
 FV = PV*(1+i)^n 
 
 </textarea></form>
+    <div></div>
+    <div id="mathpreview"></div>
+
   </div>
 
 
