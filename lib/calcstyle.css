@@ -1,0 +1,30 @@
+.CodeMirror {
+    border: 1px solid #eee;
+    height: auto;
+}
+.CodeMirror-scroll {
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+.content {
+    padding-bottom: 60px;
+}
+.credits {
+    font-family: 'Helvetica Neue', Helvetica, Arial;
+    margin-bottom:10px; 
+    color: #777;
+    text-align: left;
+    font-size:9px;
+}
+.credits a {
+    color: #777;
+}
+.credits a:hover {w
+    color: #000;
+}
+    a.license{
+    color: #6BB4D6;
+}
+    a.license:hover{
+    color: #548AA3;
+}
